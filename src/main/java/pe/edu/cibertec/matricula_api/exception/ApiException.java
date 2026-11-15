@@ -13,6 +13,18 @@ public class ApiException extends RuntimeException {
         this.codigo = codigo;
     }
 
+    public static ApiException invalido(String codigo, String mensaje) {
+        return new ApiException(HttpStatus.BAD_REQUEST, codigo, mensaje);
+    }
+
+    public static ApiException noAutenticado(String codigo, String mensaje) {
+        return new ApiException(HttpStatus.UNAUTHORIZED, codigo, mensaje);
+    }
+
+    public static ApiException prohibido() {
+        return new ApiException(HttpStatus.FORBIDDEN, "ACCESO_DENEGADO", "No tiene permisos sobre este recurso");
+    }
+
     public static ApiException noEncontrado(String codigo, String mensaje) {
         return new ApiException(HttpStatus.NOT_FOUND, codigo, mensaje);
     }
@@ -23,6 +35,10 @@ public class ApiException extends RuntimeException {
 
     public static ApiException noProcesable(String codigo, String mensaje) {
         return new ApiException(HttpStatus.UNPROCESSABLE_CONTENT, codigo, mensaje);
+    }
+
+    public static ApiException bloqueado(String mensaje) {
+        return new ApiException(HttpStatus.LOCKED, "CUENTA_BLOQUEADA", mensaje);
     }
 
     public HttpStatus getStatus() { return status; }

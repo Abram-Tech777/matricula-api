@@ -6,6 +6,7 @@ import pe.edu.cibertec.matricula_api.model.DiaSemana;
 import pe.edu.cibertec.matricula_api.model.Modalidad;
 
 import java.time.LocalTime;
+import java.util.List;
 
 public record CursoRequest(
         @Schema(example = "QA5601") @NotBlank
@@ -17,5 +18,12 @@ public record CursoRequest(
         @Schema(example = "VIRTUAL") @NotNull Modalidad modalidad,
         @Schema(example = "SABADO") @NotNull DiaSemana dia,
         @Schema(type = "string", example = "08:00") @NotNull LocalTime horaInicio,
-        @Schema(type = "string", example = "11:00") @NotNull LocalTime horaFin) {
+        @Schema(type = "string", example = "11:00") @NotNull LocalTime horaFin,
+        @Schema(example = "CI") @NotBlank String codigoCarrera,
+        @Schema(example = "D0001") String codigoDocente,
+        @Schema(example = "[\"AS5402\"]") List<@NotBlank String> requisitos) {
+
+    public List<String> requisitosOVacio() {
+        return requisitos == null ? List.of() : requisitos;
+    }
 }

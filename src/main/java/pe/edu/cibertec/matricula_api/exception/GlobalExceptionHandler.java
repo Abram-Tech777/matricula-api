@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,10 +21,25 @@ import java.util.TreeMap;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
-    ProblemDetail handleApi(ApiException ex) {
-        ProblemDetail pd = ProblemDetail.forStatusAndDetail(ex.getStatus(), ex.getMessage());
-        pd.setProperty("codigo", ex.getCodigo());
-        return pd;
+    ResponseEntity<ProblemDetail> handleApi(ApiException ex) {
+        ResponseEntity.BodyBuilder res = ResponseEntity.status(ex.getStatus());
+        if (ex.getStatus() == HttpStatus.UNAUTHORIZED) {
+            res.header(HttpHeaders.WWW_AUTHENTICATE, "Bearer");
+        }
+        return res.body(problema(ex.getStatus(), ex.getCodigo(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    ResponseEntity<ProblemDetail> handleAuth(AuthenticationException ex) {
+        ProblemDetail pd = ex instanceof OAuth2AuthenticationException
+                ? problema(HttpStatus.UNAUTHORIZED, "TOKEN_INVALIDO", "El token es inválido, venció o su sesión fue cerrada")
+                : problema(HttpStatus.UNAUTHORIZED, "NO_AUTENTICADO", "Debe iniciar sesión para usar este recurso");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).header(HttpHeaders.WWW_AUTHENTICATE, "Bearer").body(pd);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    ProblemDetail handleDenied(AccessDeniedException ex) {
+        return problema(HttpStatus.FORBIDDEN, "ACCESO_DENEGADO", "Su rol no tiene permiso para este recurso");
     }
 
     @Override
@@ -45,5 +63,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             pd.setProperty("codigo", HttpStatus.valueOf(status.value()).name());
         }
         return res;
+    }
+
+    private static ProblemDetail problema(HttpStatus status, String codigo, String detalle) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(status, detalle);
+        pd.setProperty("codigo", codigo);
+        return pd;
     }
 }

@@ -3,6 +3,10 @@ package pe.edu.cibertec.matricula_api.model;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Curso {
@@ -30,11 +34,23 @@ public class Curso {
     private LocalTime horaInicio;
     private LocalTime horaFin;
 
+    @ManyToOne(optional = false)
+    private Carrera carrera;
+
+    @ManyToOne
+    private Docente docente;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "curso_requisito",
+            joinColumns = @JoinColumn(name = "curso_id"),
+            inverseJoinColumns = @JoinColumn(name = "requisito_id"))
+    private Set<Curso> requisitos = new HashSet<>();
+
     protected Curso() {
     }
 
-    public Curso(String codigo, String nombre, int ciclo, int creditos, int vacantes,
-                 Modalidad modalidad, DiaSemana dia, LocalTime horaInicio, LocalTime horaFin) {
+    public Curso(String codigo, String nombre, int ciclo, int creditos, int vacantes, Modalidad modalidad,
+                 DiaSemana dia, LocalTime horaInicio, LocalTime horaFin) {
         this.codigo = codigo;
         actualizar(nombre, ciclo, creditos, vacantes, modalidad, dia, horaInicio, horaFin);
     }
@@ -51,6 +67,13 @@ public class Curso {
         this.horaFin = horaFin;
     }
 
+    public void asignar(Carrera carrera, Docente docente, Set<Curso> requisitos) {
+        this.carrera = carrera;
+        this.docente = docente;
+        this.requisitos.clear();
+        this.requisitos.addAll(requisitos);
+    }
+
     public boolean seCruzaCon(Curso otro) {
         return dia == otro.dia
                 && horaInicio.isBefore(otro.horaFin)
@@ -59,6 +82,10 @@ public class Curso {
 
     public String horario() {
         return dia + " " + horaInicio + "-" + horaFin;
+    }
+
+    public List<Curso> requisitosOrdenados() {
+        return requisitos.stream().sorted(Comparator.comparing(Curso::getCodigo)).toList();
     }
 
     public Long getId() { return id; }
@@ -71,4 +98,6 @@ public class Curso {
     public DiaSemana getDia() { return dia; }
     public LocalTime getHoraInicio() { return horaInicio; }
     public LocalTime getHoraFin() { return horaFin; }
+    public Carrera getCarrera() { return carrera; }
+    public Docente getDocente() { return docente; }
 }

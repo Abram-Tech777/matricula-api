@@ -21,20 +21,26 @@ public class Alumno {
     private double promedio;
     private boolean tieneDeuda;
 
+    @ManyToOne(optional = false)
+    private Carrera carrera;
+
     protected Alumno() {
     }
 
-    public Alumno(String codigo, String nombres, String apellidos, String email, double promedio, boolean tieneDeuda) {
+    public Alumno(String codigo, String nombres, String apellidos, String email, double promedio,
+                  boolean tieneDeuda, Carrera carrera) {
         this.codigo = codigo;
-        actualizar(nombres, apellidos, email, promedio, tieneDeuda);
+        actualizar(nombres, apellidos, email, promedio, tieneDeuda, carrera);
     }
 
-    public void actualizar(String nombres, String apellidos, String email, double promedio, boolean tieneDeuda) {
+    public void actualizar(String nombres, String apellidos, String email, double promedio,
+                           boolean tieneDeuda, Carrera carrera) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.email = email;
         this.promedio = promedio;
         this.tieneDeuda = tieneDeuda;
+        this.carrera = carrera;
     }
 
     public String nombreCompleto() {
@@ -48,4 +54,5 @@ public class Alumno {
     public String getEmail() { return email; }
     public double getPromedio() { return promedio; }
     public boolean isTieneDeuda() { return tieneDeuda; }
+    public Carrera getCarrera() { return carrera; }
 }

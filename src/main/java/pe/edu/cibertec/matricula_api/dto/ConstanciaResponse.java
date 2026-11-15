@@ -5,6 +5,7 @@ import java.util.List;
 public record ConstanciaResponse(
         String codigoAlumno,
         String alumno,
+        String periodo,
         double promedio,
         int descuento,
         List<MatriculaResponse> matriculas,
