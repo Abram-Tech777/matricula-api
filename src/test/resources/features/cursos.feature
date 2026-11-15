@@ -14,16 +14,16 @@ Feature: Consulta de cursos
     Scenario: Consultar un curso que no existe
       Given que Ana consulta la API de matricula
       When busca el curso "XX9999"
-      Then el codigo de respues es 404
+      Then el codigo de respuesta es 404
       And el codigo de error es "CURSO_NO_ENCONTRADO"
 
       Scenario Outline: Filtrar cursos por modalidad
         Given que Ana consulta la API de matricula
-        When lista los cursos con modatalidad "<modalidad>"
+        When lista los cursos con modalidad "<modalidad>"
         Then el codigo de respuesta es 200
         And obtiene <cantidad> cursos
         Examples:
         | modalidad | cantidad|
         | PRESENCIAL| 3       |
         | VIRTUAL   | 3       |
-        | HIBIDO    | 2       |
+        | HIBRIDO    | 2       |
