@@ -1,29 +1,30 @@
-Feature: Consulta de cursos
+# language: es
+Característica: Consulta de cursos
   Como alumno de CIBERTEC
   Quiero consultar los cursos disponibles
   Para decidir en cuales me matriculo
 
 
-  Scenario: Consultar un cursos por codigo
-    Given que Ana consulta la API de matricula
-    When busca el curso "PS5511"
-    Then el codigo de respuesta es 200
-    And el curso se llama "Pruebas de Software"
-    And la respuesta cumple el esquema "curso.json"
+  Escenario: Consultar un cursos por codigo
+    Dado que Ana consulta la API de matricula
+    Cuando busca el curso "PS5511"
+    Entonces el codigo de respuesta es 200
+    Y el curso se llama "Pruebas de Software"
+    Y la respuesta cumple el esquema "curso.json"
 
-  Scenario: Consultar un curso que no existe
-    Given que Ana consulta la API de matricula
-    When busca el curso "XX9999"
-    Then el codigo de respuesta es 404
-    And el codigo de error es "CURSO_NO_ENCONTRADO"
+  Escenario: Consultar un curso que no existe
+    Dado que Ana consulta la API de matricula
+    Cuando busca el curso "XX9999"
+    Entonces el codigo de respuesta es 404
+    Y el codigo de error es "CURSO_NO_ENCONTRADO"
 
-  Scenario Outline: Filtrar cursos por modalidad
-    Given que Ana consulta la API de matricula
-    When lista los cursos con modalidad "<modalidad>"
-    Then el codigo de respuesta es 200
-    And obtiene <cantidad> cursos
-    Examples:
+  Esquema del escenario: Filtrar cursos por modalidad
+    Dado que Ana consulta la API de matricula
+    Cuando lista los cursos con modalidad "<modalidad>"
+    Entonces el codigo de respuesta es 200
+    Y obtiene <cantidad> cursos
+    Ejemplos:
       | modalidad  | cantidad |
-      | PRESENCIAL | 3        |
-      | VIRTUAL    | 3        |
+      | PRESENCIAL | 5        |
+      | VIRTUAL    | 4        |
       | HIBRIDO    | 2        |

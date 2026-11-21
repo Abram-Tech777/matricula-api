@@ -5,7 +5,7 @@ import net.serenitybdd.screenplay.Question;
 
 public class ElMonto {
 
-    public static Question<Double> deLamaTricula() {
+    public static Question<Double> deLaMatricula() {
         return Question.about("el monto de la matricula")
                 .answeredBy(
                         actor -> SerenityRest.lastResponse().jsonPath().getDouble("monto")

@@ -2,6 +2,7 @@ package pe.edu.cibertec.matricula_api.screenplay.task;
 
 import io.restassured.http.ContentType;
 import net.serenitybdd.annotations.Step;
+import net.serenitybdd.rest.SerenityRest;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.rest.interactions.Post;
@@ -22,17 +23,17 @@ public class Matricularse implements Task {
         return new Matricularse(alumno, curso);
     }
 
-
     @Override
     @Step("{0} matricula al alumno #alumno en el curso #curso")
     public <T extends Actor> void performAs(T actor) {
+        String token = actor.recall("token");
         actor.attemptsTo(
                 Post.to("/api/matriculas")
                         .with(req -> req.contentType(ContentType.JSON)
-                                .body(
-                                        Map.of("codigoAlumno", alumno, "codigoCurso", curso)
-                                )
+                                .header("Authorization", "Bearer " + token)
+                                .body(Map.of("codigoAlumno", alumno, "codigoCurso", curso))
                         )
         );
+        actor.remember("idMatricula", SerenityRest.lastResponse().jsonPath().getLong("id"));
     }
 }
